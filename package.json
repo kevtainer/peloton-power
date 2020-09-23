@@ -1,0 +1,15 @@
+{
+  "name": "peloton-power",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@serialport/parser-delimiter": "^9.0.1",
+    "serialport": "^9.0.1"
+  }
+}
