@@ -1,6 +1,5 @@
 const SerialPort = require('serialport')
 const Delimiter = require('@serialport/parser-delimiter')
-const udp = require('dgram')
 
 const PACKET_DELIMITER = Buffer.from('f6', 'hex');
 
@@ -11,7 +10,6 @@ port = new SerialPort('/dev/ttyUSB0', { baudRate: 19200 });
 parser = port.pipe(new Delimiter({ delimiter: PACKET_DELIMITER }));
 parser.on('data', onSerialMessage);
 
-var client = udp.createSocket('udp4');
 var http = require('http'); // 1 - Import Node.js core module
 
 var server = http.createServer(function (req, res) {   // 2 - creating server
@@ -31,19 +29,6 @@ var server = http.createServer(function (req, res) {   // 2 - creating server
 server.listen(5000); //3 - listen for any incoming requests
 
 console.log('Node.js web server at port 5000 is running..')
-/** 
-setInterval(function() {
-  data = JSON.stringify({ power, cadence });
-  //sending msg
-  client.send(data,2222,'localhost',function(error){
-    if(error){
-      client.close();
-    }else{
-      console.log('Data sent !!!');
-    }
-  });
-}, 250)*/
-
 
 function onSerialMessage(data) {
   // @todo handle bike versions (v1/v2) -- data[0]
