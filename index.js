@@ -5,6 +5,7 @@ const PACKET_DELIMITER = Buffer.from('f6', 'hex');
 
 power = 0;
 cadence = 0;
+resistence = 0;
 
 port = new SerialPort('/dev/ttyUSB0', { baudRate: 19200 });
 parser = port.pipe(new Delimiter({ delimiter: PACKET_DELIMITER }));
@@ -29,15 +30,37 @@ var server = http.createServer(function (req, res) {   // 2 - creating server
 server.listen(5000); //3 - listen for any incoming requests
 
 console.log('Node.js web server at port 5000 is running..')
+// f6f54a3f - resistence
+// f6f54136 - cadence
+// f6f54439 - power
+setInterval(function() {
+  // request cadence
+  port.write(Buffer.from('f6f54136', 'hex'), function(err) {
+  if (err) {
+      return console.log('Error on write: ', err.message)
+    }
+  })
+  
+  setTimeout(function() {
+    // request power
+    port.write(Buffer.from('f6f54439', 'hex'), function(err) {
+      if (err) {
+        return console.log('Error on write: ', err.message)
+      }
+    })
+  }, 100)
+}, 200)
 
 function onSerialMessage(data) {
-  // @todo handle bike versions (v1/v2) -- data[0]
   switch(data[1]) {
     case 65:
       cadence = decodePeloton(data, data[2], false);
       return;
     case 68:
       power = decodePeloton(data, data[2], true);
+      return;
+    case 74:
+      resistence = decodePeloton(data, data[2], true);
       return;
   }
 }
